@@ -31,6 +31,7 @@ function Location(city, geoData) {
 function Weather(day) {
   this.forecast = day.summary;
   this.time = new Date(day.time * 1000).toDateString();
+  this.created = Date.now()
 }
 
 // Fetch Requests
