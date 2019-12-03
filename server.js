@@ -8,9 +8,14 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const superagent = require('superagent')
+const pg = require('pg');
 
 const PORT = process.env.PORT || 3000;
 
+// Database Connection
+const client = new pg.Client(process.env.DATABASE_URL);
+client.on('err', err => console.error(err));
+client.connect();
 
 // Middleware
 app.use(cors());
