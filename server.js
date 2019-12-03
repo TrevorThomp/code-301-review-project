@@ -12,7 +12,9 @@ const pg = require('pg');
 
 const PORT = process.env.PORT || 3000;
 
+// Router
 const location = require('./routes/location')
+const weather = require('./routes/weather');
 
 // Database Connection
 const client = new pg.Client(process.env.DATABASE_URL);
@@ -22,34 +24,9 @@ client.connect();
 // Middleware
 app.use(cors());
 app.use(express.static('front-end'))
+
 app.use('/location', location);
-
-// Routes
-// app.get('/weather', handleWeather)
-
-// Contructors
-
-function Weather(day) {
-  this.forecast = day.summary;
-  this.time = new Date(day.time * 1000).toDateString();
-  this.created = Date.now()
-}
-
-// Fetch Requests
-
-
-function handleWeather(request, response) {
-  const url = `https://api.darksky.net/forecast/${process.env.WEATHER_API_KEY}/${request.query.data.latitude},${request.query.data.longitude}`;
-
-  superagent.get(url)
-    .then( data => {
-      const weatherSummaries = data.body.daily.data.map(day => new Weather(day));
-      response.status(200).send(weatherSummaries);
-    })
-    .catch( error => {
-      errorHandler('So sorry, something went really wrong', request, response);
-    });
-}
+app.use('/weather', weather);
 
 // Error Handler function to throw
 function errorHandler(error,request,response) {
