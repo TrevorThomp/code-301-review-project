@@ -13,20 +13,18 @@ const pg = require('pg');
 const PORT = process.env.PORT || 3000;
 
 // Router
-const location = require('./routes/location')
-const weather = require('./routes/weather');
+const getLocation = require('./routes/location')
+// const getWeather = require('./routes/weather');
 
 // Database Connection
-const client = new pg.Client(process.env.DATABASE_URL);
-client.on('err', err => console.error(err));
-client.connect();
+
 
 // Middleware
 app.use(cors());
 app.use(express.static('front-end'))
 
-app.use('/location', location);
-app.use('/weather', weather);
+
+app.get('/location', getLocation);
 
 // Error Handler function to throw
 function errorHandler(error,request,response) {
