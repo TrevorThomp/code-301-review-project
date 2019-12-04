@@ -13,7 +13,7 @@ CREATE TABLE weather (
   forecast VARCHAR(255),
   time VARCHAR(255),
   created VARCHAR(255),
-  FOREIGN KEY (location_id) REFERENCES locations (id)
+  location_id INTEGER NOT NULL REFERENCES locations(id)
 );
 
 CREATE TABLE movies (
@@ -25,6 +25,8 @@ CREATE TABLE movies (
     image_url VARCHAR(255),
     popularity NUMERIC(6,4),
     released_on CHAR(10),
-    created VARCHAR(255)
-    FOREIGN KEY (location_id) REFERENCES locations (id)
+    created VARCHAR(255),
+    location_id INTEGER NOT NULL REFERENCES locations(id)
   );
+
+  -- INSERT INTO movies (title, overview, average_votes, total_votes, image_url, popularity, released_on, created) VALUES (1, 2, 3, 4, 5, 6, 7, 8)

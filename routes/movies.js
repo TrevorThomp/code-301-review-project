@@ -40,7 +40,7 @@ Movies.prototype.getMovie = function(location) {
 Movies.prototype.save = function(locationID) {
   const SQL = `INSERT INTO movies (title, overview, average_votes, total_votes, image_url, popularity, released_on, created, location_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`;
   const values = Object.values(this);
-  values.push(locationID)
+  values.push(locationID);
 
   return client.query(SQL,values)
 }
@@ -73,19 +73,15 @@ function queryMovies(request,response) {
     location: request.query.data,
 
     dataHit: (results) => {
-      console.log('got movies from DB')
       let movieCache = (Date.now() - results.rows[0].created);
       if (movieCache > Movies.cacheTime) {
-        console.log('cache invalid')
         Movies.delete('movies', request.query.data.id)
         this.dataMiss()
       } else {
-        console.log('got movies from DB')
         response.send(results.rows)
       }
     },
     dataMiss: () => {
-      console.log('fetching movies')
       Movies.prototype.getMovie(request.query.data)
         .then(data => response.send(data))
     }
