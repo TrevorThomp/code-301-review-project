@@ -7,17 +7,12 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const superagent = require('superagent')
-const pg = require('pg');
 
 const PORT = process.env.PORT || 3000;
 
 // Router
 const getLocation = require('./routes/location')
 // const getWeather = require('./routes/weather');
-
-// Database Connection
-
 
 // Middleware
 app.use(cors());
