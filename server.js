@@ -11,9 +11,10 @@ const cors = require('cors');
 const PORT = process.env.PORT || 3000;
 
 // Router
-const getLocation = require('./routes/location')
+const getLocation = require('./routes/location');
 const getWeather = require('./routes/weather');
-const getMovies = require('./routes/movies')
+const getMovies = require('./routes/movies');
+const getYelp = require('./routes/yelp');
 
 // Middleware
 app.use(cors());
@@ -23,6 +24,7 @@ app.use(express.static('front-end'))
 app.get('/location', getLocation);
 app.get('/weather', getWeather);
 app.get('/movies', getMovies);
+app.get('/yelp', getYelp)
 
 // Error Handler function to throw
 function errorHandler(error,request,response) {
