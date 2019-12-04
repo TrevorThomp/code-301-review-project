@@ -1,5 +1,7 @@
 'use strict';
 
+require('dotenv').config();
+
 // Application Dependencies
 const superagent = require('superagent');
 const pg = require('pg');
@@ -25,10 +27,18 @@ Location.getLocation = function (request,response){
   return superagent
     .get(url)
     .then( result=> {
-      if(!result.body.results.length) {throw 'No data';}
       let location = new Location(query, result.body.results[0]);
-      response.send(location)
+      return location.save()
+        .then(data => response.send(location))
     });
+};
+
+Location.prototype.save = function() {
+  const SQL = `INSERT INTO locations (search_query, formatted_query, latitude, longitude) VALUES ($1, $2, $3, $4) RETURNING *`;
+
+  let values = Object.values(this);
+  return client.query(SQL, values)
+    .then(data => console.log('success'))
 };
 
 // Export Location API Fetch
