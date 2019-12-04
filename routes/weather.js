@@ -1,3 +1,5 @@
+'use strict';
+
 require('dotenv').config();
 
 // Application Dependencies
@@ -55,22 +57,36 @@ Weather.prototype.lookup = function(table) {
     .catch(err => console.error(err))
 }
 
+Weather.delete = (table, location_id) => {
+  const SQL = `DELETE FROM ${table} WHERE location_id=${location_id}`;
+
+  return client.query(SQL)
+}
+
+Weather.cacheTime = 864000;
+
 function queryWeather(request,response) {
   const weather = {
     location: request.query.data,
 
-    dataHit: (results) => {
-      console.log('got weather from DB')
-      response.send(results.rows);
+    dataHit: function(results) {
+      let weatherCache = (Date.now() - results.rows[0].created);
+      if(weatherCache > Weather.cacheTime) {
+        console.log('cache invalid')
+        Weather.delete('weather', request.query.data.id)
+        this.dataMiss()
+      } else {
+        console.log('got weather from DB')
+        response.send(results.rows);
+      }
     },
     dataMiss: () => {
-      console.log('fetching')
       Weather.prototype.getWeather(request.query.data)
         .then(data => response.send(data))
+        .catch(console.error)
     }
   }
   Weather.prototype.lookup(weather)
 }
-
 
 module.exports = queryWeather;

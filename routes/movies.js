@@ -19,6 +19,7 @@ function Movies(movie) {
   this.image_url = `https://image.tmdb.org/t/p/w500/${movie.poster_path}`;
   this.popularity = movie.popularity;
   this.released_on = movie.release_date;
+  this.created = Date.now();
 }
 
 Movies.prototype.getMovie = function(location) {
@@ -37,11 +38,11 @@ Movies.prototype.getMovie = function(location) {
 }
 
 Movies.prototype.save = function(locationID) {
-  const SQL = `INSERT INTO movies (title, overview, average_votes, total_votes, image_url, popularity, released_on, location_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`;
+  const SQL = `INSERT INTO movies (title, overview, average_votes, total_votes, image_url, popularity, released_on, created, location_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`;
   const values = Object.values(this);
   values.push(locationID)
 
-  return client.query(SQL, values)
+  return client.query(SQL,values)
 }
 
 Movies.prototype.lookup = function(table) {
@@ -59,13 +60,38 @@ Movies.prototype.lookup = function(table) {
     .catch(err => console.error(err))
 }
 
+Movies.delete = (table, location_id) => {
+  const SQL = `DELETE FROM ${table} WHERE location_id=${location_id}`;
+
+  return client.query(SQL)
+}
+
+Movies.cacheTime = 864000;
+
 function queryMovies(request,response) {
   const movies = {
     location: request.query.data,
 
     dataHit: (results) => {
       console.log('got movies from DB')
-      
+      let movieCache = (Date.now() - results.rows[0].created);
+      if (movieCache > Movies.cacheTime) {
+        console.log('cache invalid')
+        Movies.delete('movies', request.query.data.id)
+        this.dataMiss()
+      } else {
+        console.log('got movies from DB')
+        response.send(results.rows)
+      }
+    },
+    dataMiss: () => {
+      console.log('fetching movies')
+      Movies.prototype.getMovie(request.query.data)
+        .then(data => response.send(data))
     }
   }
+
+  Movies.prototype.lookup(movies)
 }
+
+module.exports = queryMovies;
