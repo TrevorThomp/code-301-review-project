@@ -29,4 +29,12 @@ CREATE TABLE movies (
     location_id INTEGER NOT NULL REFERENCES locations(id)
   );
 
-  -- INSERT INTO movies (title, overview, average_votes, total_votes, image_url, popularity, released_on, created) VALUES (1, 2, 3, 4, 5, 6, 7, 8)
+CREATE TABLE yelp (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255),
+  url VARCHAR(255),
+  price VARCHAR(255),
+  rating NUMERIC(2,1),
+  image_url VARCHAR(255),
+  location_id INTEGER NOT NULL REFERENCES locations(id)
+)
