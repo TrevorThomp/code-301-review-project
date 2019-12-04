@@ -20,7 +20,7 @@ function Weather(day) {
 Weather.prototype.getWeather = function(location) {
   const url = `https://api.darksky.net/forecast/${process.env.WEATHER_API_KEY}/${location.latitude},${location.longitude}`;
 
-  superagent.get(url)
+  return superagent.get(url)
     .then( data => {
       const weatherSummaries = data.body.daily.data.map(day => {
         const daySummary = new Weather(day);
@@ -66,7 +66,7 @@ function queryWeather(request,response) {
     dataMiss: () => {
       console.log('fetching')
       Weather.prototype.getWeather(request.query.data)
-        .then(data => console.log(data))
+        .then(data => response.send(data))
     }
   }
   Weather.prototype.lookup(weather)
