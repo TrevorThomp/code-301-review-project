@@ -28,7 +28,8 @@ Location.prototype.getLocation = function (query){
     .then( result=> {
       let location = new Location(query, result.body.results[0]);
       return location.save()
-        .then(() => {
+        .then(result => {
+          location.id = result.rows[0].id;
           return location
         })
     });
@@ -61,12 +62,10 @@ function queryLocation(request,response) {
     query : request.query.data,
 
     dataHit: (results) => {
-      console.log('fetch from DB')
       response.send(results.rows[0]);
     },
     dataMiss: () => {
-      console.log('no data in DB')
-      Location.getLocation(request.query.data)
+      Location.prototype.getLocation(request.query.data)
         .then(data => response.send(data))
     }
   }
