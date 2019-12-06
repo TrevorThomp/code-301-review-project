@@ -38,3 +38,12 @@ Trail.prototype.getTrail = function(location) {
       return trailData;
     })
 }
+
+Trail.prototype.save = function(locationID) {
+  const SQL = `INSERT INTO trails (name, location, length, stars, star_votes, summary, trail_url, conditions, condition_date, condition_time, location_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`;
+
+  const values = Object.values(this);
+  values.push(locationID);
+
+  return client.query(SQL, values)
+}
