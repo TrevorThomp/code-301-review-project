@@ -72,11 +72,9 @@ function queryWeather(request,response) {
     dataHit: function(results) {
       let weatherCache = (Date.now() - results.rows[0].created);
       if(weatherCache > Weather.cacheTime) {
-        console.log('cache invalid')
         Weather.delete('weather', request.query.data.id)
         this.dataMiss()
       } else {
-        console.log('got weather from DB')
         response.send(results.rows);
       }
     },
