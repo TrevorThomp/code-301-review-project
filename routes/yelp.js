@@ -16,6 +16,7 @@ function Yelp(data) {
   this.price = data.price;
   this.url = data.url;
   this.image_url = data.image_url;
+  this.created = Date.now()
 }
 
 Yelp.prototype.getYelp = function(location) {
@@ -35,7 +36,7 @@ Yelp.prototype.getYelp = function(location) {
 }
 
 Yelp.prototype.save = function(locationID) {
-  const SQL = `INSERT INTO yelp (name, rating, price, url, image_url, location_id) VALUES ($1, $2, $3, $4, $5, $6)`;
+  const SQL = `INSERT INTO yelp (name, rating, price, url, image_url, created, location_id) VALUES ($1, $2, $3, $4, $5, $6, $7)`;
   const values = Object.values(this);
   values.push(locationID);
 

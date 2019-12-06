@@ -36,6 +36,7 @@ CREATE TABLE yelp (
   price VARCHAR(255),
   rating NUMERIC(2,1),
   image_url VARCHAR(255),
+  created VARCHAR(255),
   location_id INTEGER NOT NULL REFERENCES locations(id)
 )
 
@@ -51,5 +52,6 @@ CREATE TABLE trails (
   conditions TEXT,
   condition_date VARCHAR(255),
   condition_time VARCHAR(255),
+  created VARCHAR(255),
   location_id INTEGER NOT NULL REFERENCES locations(id)
 )
