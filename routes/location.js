@@ -20,8 +20,7 @@ function Location(query, data){
 }
 
 // Google Geocode API Fetch
-Location.getLocation = function (request,response){
-  const query = request.query.data;
+Location.prototype.getLocation = function (query){
   const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${query}&key=${process.env.GEOCODE_API_KEY}`;
 
   return superagent
@@ -29,7 +28,10 @@ Location.getLocation = function (request,response){
     .then( result=> {
       let location = new Location(query, result.body.results[0]);
       return location.save()
-        .then(data => response.send(location))
+        .then(result => {
+          location.id = result.rows[0].id;
+          return location
+        })
     });
 };
 
@@ -38,8 +40,38 @@ Location.prototype.save = function() {
 
   let values = Object.values(this);
   return client.query(SQL, values)
-    .then(data => console.log('success'))
 };
 
+Location.prototype.lookup = function(table) {
+  const SQL = `SELECT * FROM locations WHERE search_query=$1`;
+  const values = [table.query];
+
+  return client.query(SQL,values)
+    .then(results => {
+      if (results.rowCount > 0) {
+        table.dataHit(results)
+      } else {
+        table.dataMiss()
+      }
+    })
+    .catch(err => console.error(err))
+}
+
+function queryLocation(request,response) {
+  const location = {
+    query : request.query.data,
+
+    dataHit: (results) => {
+      response.send(results.rows[0]);
+    },
+    dataMiss: () => {
+      Location.prototype.getLocation(request.query.data)
+        .then(data => response.send(data))
+    }
+  }
+
+  Location.prototype.lookup(location)
+}
+
 // Export Location API Fetch
-module.exports = Location.getLocation;
+module.exports = queryLocation;
