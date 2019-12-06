@@ -26,7 +26,7 @@ function Trail(data) {
 }
 
 Trail.prototype.getTrail = function(location) {
-  const url = `https://www.hikingproject.com/data/get-trails?lat=${request.query.data.latitude}&lon=${request.query.data.longitude}&key=${process.env.TRAIL_API_KEY}`;
+  const url = `https://www.hikingproject.com/data/get-trails?lat=${location.latitude}&lon=${location.longitude}&key=${process.env.TRAIL_API_KEY}`;
 
   return superagent
     .get(url)
@@ -41,7 +41,7 @@ Trail.prototype.getTrail = function(location) {
 }
 
 Trail.prototype.save = function(locationID) {
-  const SQL = `INSERT INTO trails (name, location, length, stars, star_votes, summary, trail_url, conditions, condition_date, condition_time, created, location_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`;
+  const SQL = `INSERT INTO trails (name, location, length, stars, star_votes, summary, trail_url, conditions, condition_date, condition_time, created, location_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`;
 
   const values = Object.values(this);
   values.push(locationID);

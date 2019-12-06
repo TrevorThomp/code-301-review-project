@@ -26,7 +26,7 @@ app.get('/location', getLocation);
 app.get('/weather', getWeather);
 app.get('/movies', getMovies);
 app.get('/yelp', getYelp);
-app.get('trail', getTrails);
+app.get('/trails', getTrails);
 
 // Error if route does not exist
 app.use('*', (request, response) => response.send('Sorry, that route does not exist.'));
